@@ -4,7 +4,7 @@ fetch("http://localhost:3000/api/products")
     console.log(products);
     productList(products);
 })
-.catch((err) => console.log("Erreur fetch API"));
+.catch((err) => console.log("Erreur fetch API" + err.message));
 
 function productList(products) {
 let articlePlace = document.getElementById('items');

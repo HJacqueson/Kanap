@@ -1,8 +1,6 @@
 const searchParams = new URLSearchParams(document.location.search);
 const id = searchParams.get("_id");
-console.log(id); 
-
-
+console.log(id);
 
 fetch
 ("http://localhost:3000/api/products")
@@ -11,7 +9,7 @@ fetch
     console.log(products);
     productList(products);
 })
-.catch((err) => console.log("Erreur fetch API"));
+.catch((err) => console.log("Erreur fetch API" + err.message));
 
 let srcAlt = document.querySelector('.item__img');
 let title = document.getElementById('title');
@@ -34,7 +32,6 @@ function productList(products) {
 };
 
 let addCart = {};
-let cart = [addCart];
 addCart._id = id;
 console.log(addCart);
 
@@ -46,13 +43,17 @@ colorOption.addEventListener("input", e => {
     console.log(addCart);
 });
 
-let quantityChoice = document.querySelector("input#quantity");
+let quantityPriceChoice = document.querySelector("input#quantity");
 
-quantityChoice.addEventListener("input", e => {
+quantityPriceChoice.addEventListener("input", e => {
     let productQuantity;
     productQuantity = e.target.value;
     addCart.quantity = productQuantity;
     console.log(addCart);
+    let priceChoice =  document.getElementById("price").textContent;
+    productPrice = parseInt(priceChoice) * parseInt(productQuantity);
+    addCart.price = productPrice;
+    console.log (addCart);
 });
 
 const productChoice = document.getElementById('addToCart');
@@ -63,7 +64,7 @@ productChoice.addEventListener("click", () => {
         addCart.color === undefined || 
         addCart.color === "--SVP, choisissez une couleur --" || 
         addCart.quantity === undefined) {
-        alert('Attention ! Vous devez selectionnez une couler et une quantité comprise entre 1 et 100 pour tout ajout au panier.');
+        alert('Attention ! Vous devez selectionnez une couleur et une quantité comprises entre 1 et 100 pour tout ajout au panier.');
     }
     else {
         alert('Produit Ajouté !');
@@ -81,24 +82,25 @@ function addToCart() {
     let registerProduct = cart.find(cart => cart._id === id && cart.color === addCart.color);
     if (registerProduct != undefined) {
         addCart.quantity = parseInt(registerProduct.quantity) + parseInt(addCart.quantity);
+        addCart.price = parseInt(registerProduct.price) + parseInt(addCart.price);
         let indexProduct = cart.indexOf(registerProduct);
         console.log(indexProduct);
         if (indexProduct !== -1) {
             cart.splice(indexProduct, 1);
         }
-        cart.push(addCart);
     }
-    else {
-        cart.push(addCart);
-        console.log(cart);
-        
-    }
+    let imgChoice =  document.querySelector('.item__img > img').src;
+    addCart.img = imgChoice;
+    let nameChoice = document.getElementById('title').textContent;
+    addCart.name = nameChoice;
+    cart.push(addCart);
     localStorage.cart = JSON.stringify(cart);
+    location.reload(true);
 }
 
 function getCart() {
 
-    let cart = localStorage.getItem("cart");
+    let cart = localStorage.getItem('cart');
     if (cart === null) {
         return [];
     } 
