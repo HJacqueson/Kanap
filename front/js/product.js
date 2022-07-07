@@ -7,16 +7,16 @@ fetch
 .then((res) => res.json())// Renvoi le résultat en JSON
 .then((products) => { // Les données JSON sont applées products
     console.log(products);
-    productList(products);//Appel de la fonction producList() prenant pour variable products
+    productList(products);// Appel de la fonction producList() prenant pour variable products
 })
 .catch((err) => console.log("Erreur fetch API" + err.message));// En cas d'erreur la console affichera Erreur fetch APi suivi du message d'erreur
-//** Variables de selection d'emplacement des propriétés des products dans le html **//
+//** Variables de selection d'emplacements des propriétés des products dans le html **//
 let srcAlt = document.querySelector('.item__img');
 let title = document.getElementById('title');
 let price = document.getElementById('price');
 let description = document.getElementById('description');
 let colorOption = document.querySelector('#colors');
-//** Fonction productList -> injecte les propriétés des articles de products dans le html **//
+//** Fonction productList -> insère les propriétés des articles de products dans le html **//
 function productList(products) {
     for (let article of products) {
         if (id === article._id) {
@@ -34,28 +34,28 @@ function productList(products) {
 let article = {};// Déclaration de l'objet article
 article._id = id;// insertion de l'id dans l'article
 console.log(article);
-//** Écoute de l'évènement de choix de couleur **//
+//** Écoute de l'évènement de choix de couleurs **//
 colorOption.addEventListener("input", e => {
     let productColor; 
-    productColor = e.target.value; // Attribut l'input à la variable productColor
+    productColor = e.target.value; // Attribut la valeur de l'input à la variable productColor
     article.color = productColor; // Attribut la valeur productColor à la propriété color de l'article
     console.log(article);
 });
 
-let quantityPriceChoice = document.querySelector("input#quantity");// Selection d'emplacement du choix de quantité
+let quantityPriceChoice = document.querySelector("input#quantity");// Sélection d'emplacement du choix de quantité
 //** Écoute de l'évènement de choix de quantité **//
 quantityPriceChoice.addEventListener("input", e => {
     let productQuantity;
-    productQuantity = e.target.value;// attribut l'input à la variable productQuantity
-    article.quantity = productQuantity;// attribut la valeur productQuantity à la propriété quantity de l'article
+    productQuantity = e.target.value;// Attribut la valeur de l'input à la variable productQuantity
+    article.quantity = productQuantity;// Attribut la valeur productQuantity à la propriété quantity de l'article
     console.log(article);
-    let priceChoice =  document.getElementById("price").textContent;// Prend pour valeur le prix de la balise html ayant pour id price
+    let priceChoice =  document.getElementById("price").textContent;// Prend pour valeur le prix en texte de la balise html ayant pour id price
     productPrice = parseInt(priceChoice) * parseInt(productQuantity);// Multiplie le prix du produit par sa quantité
-    article.price = productPrice;// attribut la valeur productPrice à la propriété price de l'article
+    article.price = productPrice;// Attribut la valeur productPrice à la propriété price de l'article
     console.log (article);
 });
 
-const productChoice = document.getElementById('addToCart'); //Selection d'emplacement de la balise ayant pour id addToCart 
+const productChoice = document.getElementById('addToCart'); // Sélection de l'emplacement de la balise ayant pour id addToCart 
 //** Écoute de l'évènement click de choix d'article **//
 productChoice.addEventListener("click", () => {
     if (article.quantity < 1 || // Conditions de message d'alerte
@@ -68,15 +68,15 @@ productChoice.addEventListener("click", () => {
     else {
         alert('Produit Ajouté !');
         productChoice.textContent = 'Produit Ajouté';
-       addToCart();// Appel de la fonction addToCart
+       addToCart();// Appel de la fonction addToCart()
     } 
 });
-//** Fonction addToCart qui ajoute un article au panier (cart)**//
+//** Fonction addToCart qui ajoute un article au panier (cart) **//
 function addToCart() {
-    let cart = getCart();// Appel de la fonction getCart
+    let cart = getCart();// Appel de la fonction getCart()
     console.log(cart);
-    let registerProduct = cart.find(cart => cart._id === id && cart.color === article.color);// Recherche d'article similaire dans le panier
-    if (registerProduct != undefined) { // Condition de présence d'article similaire dans le panier
+    let registerProduct = cart.find(cart => cart._id === id && cart.color === article.color);// Recherche d'un article similaire dans le panier (cart)
+    if (registerProduct != undefined) { // Condition de présence d'un article similaire dans le panier (cart)
         article.quantity = parseInt(registerProduct.quantity) + parseInt(article.quantity);// Ajout de la nouvelle quantité à la quantité initiale de l'article
         console.log(article.quantity);
         article.price = parseInt(registerProduct.price) + parseInt(article.price);// Ajout du nouveau prix au prix initial de l'article
@@ -93,7 +93,7 @@ function addToCart() {
     let nameChoice = document.getElementById('title').textContent; // Récupération du titre du produit
     article.name = nameChoice;// Ajout du titre à l'article du panier (cart)
     cart.push(article);// Article poussé dans le panier (cart)
-    localStorage.cart = JSON.stringify(cart);// Enregistrement de l'article dans le localStorage du tableau JSON du panier (cart)
+    localStorage.cart = JSON.stringify(cart);// Enregistrement de l'article dans le localStorage du tableau JSON panier (cart)
     console.log(cart);
     location.reload(true);// Rechargement de la page
 }
