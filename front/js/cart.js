@@ -1,12 +1,12 @@
-const cart = getCart(); // Constante du panier (cart) -> Appel de la fonction getCart()
+const cart = getCart();// Constante du panier (cart) -> Appel de la fonction getCart()
 //** Fonction getCart qui récupère le panier (cart) dans le localStorage **//
 function getCart() {
     let cart = localStorage.getItem('cart');// Récupération du panier (cart) dans le localStorage
     if (cart === null) {
-        return []; // Création d'un panier sous forme de tableau si panier (cart) inexistant 
+        return [];// Création d'un panier sous forme de tableau si panier (cart) inexistant 
     } 
     else {
-        return JSON.parse(cart); // Récupération du panier (cart) sous forme de tableau JSON
+        return JSON.parse(cart);// Récupération du panier (cart) sous forme de tableau JSON
     }
 }
 //** Variables de selection d'emplacements des paramètres des articles dans le html et initialisation des totaux **//
@@ -20,12 +20,12 @@ fillCart();
 //** Fonction fillCart de remplissage de panier (cart) **//
 function fillCart() {
 	console.log(cart);
-    if(cart.length === 0) { // Tableau panier (cart) vide
+    if(cart.length === 0) {// Tableau panier (cart) vide
         articlePlace.innerHTML = "<p>Votre panier est vide !</p>";
     } else {
-        for(article of cart) { // Pour chaque article du panier (cart)
+        for(article of cart) {// Pour chaque article du panier (cart)
             let articleUnity = parseInt(article.price) / parseInt(article.quantity); // Affiche un prix à l'unité
-            increaseQuantityPrice(); // ci-dessous) // Appel de la fonction increaseQuantityPrice() d'augmentation de la quantité et du prix affichés // Placement des paramètres de l'article dans le html
+            increaseQuantityPrice();// ci-dessous) // Appel de la fonction increaseQuantityPrice() d'augmentation de la quantité et du prix affichés // Placement des paramètres de l'article dans le html
             articlePlace.innerHTML += `<article class="cart__item" data-id="${article._id}" data-color="${article.color}">
             <div class="cart__item__img">
               <img src="${article.img}" alt="Photographie d'un canapé">
@@ -49,15 +49,15 @@ function fillCart() {
           </article>`
         }
     }   
-    modifyQuantity(); // Appel de la fonction modifyQuantity() de modification de quantité de l'article
-    deleteCart(); // Appel de la fonction deleteCart() de suppression d'article du panier (cart)
+    modifyQuantity();// Appel de la fonction modifyQuantity() de modification de quantité de l'article
+    deleteCart();// Appel de la fonction deleteCart() de suppression d'article du panier (cart)
 }
 //** Fonction modifyQuantity de modification de quantité de l'article **//
 function modifyQuantity() {
-    const quantityArticle = document.querySelectorAll(".cart__item"); // Constante de sélection de l'emplacement html de l'article
-    quantityArticle.forEach((element) => { // Applique la fonction qui suit sur chaque élément du tableau panier (cart)
+    const quantityArticle = document.querySelectorAll(".cart__item");// Constante de sélection de l'emplacement html de l'article
+    quantityArticle.forEach((element) => {// Applique la fonction qui suit sur chaque élément du tableau panier (cart)
         element.addEventListener("change", e => { //** Écoute de l'évènement de changement de quantité **//
-            let cart = JSON.parse(localStorage.getItem("cart")); // Récupération du tableau du panier
+            let cart = JSON.parse(localStorage.getItem("cart"));// Récupération du tableau du panier
             for (article of cart) {
                 if (article._id === element.dataset.id && article.color === element.dataset.color) { // Conditions de correspondance des paramètres
                     article.price = parseInt(article.price) / parseInt(article.quantity); // Obtention du prix à l'unité
