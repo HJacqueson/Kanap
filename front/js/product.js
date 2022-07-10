@@ -49,10 +49,6 @@ quantityPriceChoice.addEventListener("input", e => {
     productQuantity = e.target.value;// Attribut la valeur de l'input à la variable productQuantity
     article.quantity = productQuantity;// Attribut la valeur productQuantity à la propriété quantity de l'article
     console.log(article);
-    let priceChoice =  document.getElementById("price").textContent;// Prend pour valeur le prix en texte de la balise html ayant pour id price
-    productPrice = parseInt(priceChoice) * parseInt(productQuantity);// Multiplie le prix du produit par sa quantité
-    article.price = productPrice;// Attribut la valeur productPrice à la propriété price de l'article
-    console.log (article);
 });
 
 const productChoice = document.getElementById('addToCart');// Sélection de l'emplacement de la balise ayant pour id addToCart 
@@ -61,7 +57,7 @@ productChoice.addEventListener("click", () => {
     if (article.quantity < 1 || // Conditions de message d'alerte
         article.quantity > 100 || 
         article.color === undefined || 
-        article.color === "--SVP, choisissez une couleur --" || 
+        article.color === "" || 
         article.quantity === undefined) {
         alert('Attention ! Vous devez selectionnez une couleur et une quantité comprises entre 1 et 100 pour tout ajout au panier.');
     }
@@ -79,8 +75,6 @@ function addToCart() {
     if (registerProduct != undefined) {// Condition de présence d'un article similaire dans le panier (cart)
         article.quantity = parseInt(registerProduct.quantity) + parseInt(article.quantity);// Ajout de la nouvelle quantité à la quantité initiale de l'article
         console.log(article.quantity);
-        article.price = parseInt(registerProduct.price) + parseInt(article.price);// Ajout du nouveau prix au prix initial de l'article
-        console.log(article.price);
         let indexProduct = cart.indexOf(registerProduct);// Récupération de l'index de l'article initial dans le panier (cart)
         console.log(indexProduct);
         if (indexProduct !== -1) {

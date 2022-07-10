@@ -1,56 +1,72 @@
-const cart = getCart();// Constante du panier (cart) -> Appel de la fonction getCart()
-//** Fonction getCart qui récupère le panier (cart) dans le localStorage **//
-function getCart() {
-    let cart = localStorage.getItem('cart');// Récupération du panier (cart) dans le localStorage
-    if (cart === null) {
-        return [];// Création d'un panier sous forme de tableau si panier (cart) inexistant 
-    } 
-    else {
-        return JSON.parse(cart);// Récupération du panier (cart) sous forme de tableau JSON
-    }
-}
+fetch
+("http://localhost:3000/api/products")
+.then((res) => res.json())// Renvoi le résultat en JSON
+.then((products) => {// Les données JSON sont applées products
+    console.log(products);
+    fillCart(products);// Appel de la fonction fillCart() prenant pour variable products
+})
+.catch((err) => console.log("Erreur fetch API" + err.message));
+
 //** Variables de selection d'emplacements des paramètres des articles dans le html et initialisation des totaux **//
 let articlePlace = document.getElementById("cart__items");
 let totalPrice = document.getElementById("totalPrice");
 let totalQuantity = document.getElementById("totalQuantity");
 let totalPriceProducts = 0;
 let totalQuantityProducts = 0;
-//** Appel de la fonction fillcart() de remplissage de panier (cart) **//
-fillCart();
 //** Fonction fillCart de remplissage de panier (cart) **//
-function fillCart() {
-	console.log(cart);
-    if(cart.length === 0) {// Tableau panier (cart) vide
-        articlePlace.innerHTML = "<p>Votre panier est vide !</p>";
-    } else {
-        for(article of cart) {// Pour chaque article du panier (cart)
-            let articleUnity = parseInt(article.price) / parseInt(article.quantity); // Affiche un prix à l'unité
-            increaseQuantityPrice();// ci-dessous) // Appel de la fonction increaseQuantityPrice() d'augmentation de la quantité et du prix affichés // Placement des paramètres de l'article dans le html
-            articlePlace.innerHTML += `<article class="cart__item" data-id="${article._id}" data-color="${article.color}">
-            <div class="cart__item__img">
-              <img src="${article.img}" alt="Photographie d'un canapé">
-            </div>
-            <div class="cart__item__content">
-              <div class="cart__item__content__description">
-                <h2>${article.name}</h2>
-                <p>${article.color}</p>
-                <p>${articleUnity} €</p>
-              </div>
-              <div class="cart__item__content__settings">
-                <div class="cart__item__content__settings__quantity">
-                  <p>Qté :</p>
-                  <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${article.quantity}">
-                </div>
-                <div class="cart__item__content__settings__delete">
-                  <p class="deleteItem">Supprimer</p>
-                </div>
-              </div>
-            </div>
-          </article>`
+function fillCart(products) {
+    const cart = getCart();// Appel de la fonction getCart() de récupération du panier
+    console.log(cart);
+    if (cart.length != 0) {
+        for (let article of cart) {
+            for (let i = 0, l = products.length; i < l; i++) {// Boucle de parcours de l'API pour trouver la correspondance entre id du panier et de l'article
+                if(article._id === products[i]._id) {
+                    article.price = products[i].price;// Attribut le prix du product de l'API correspondant, au prix de l'article //ci-dessous, Placement des propriétés de l'article dans le html
+                    console.log(article);
+                    articlePlace.innerHTML += `<article class="cart__item" data-id="${article._id}" data-color="${article.color}">
+                    <div class="cart__item__img">
+                      <img src="${article.img}" alt="Photographie d'un canapé">
+                    </div>
+                    <div class="cart__item__content">
+                      <div class="cart__item__content__description">
+                        <h2>${article.name}</h2>
+                        <p>${article.color}</p>
+                        <p>${article.price} €</p>
+                      </div>
+                      <div class="cart__item__content__settings">
+                        <div class="cart__item__content__settings__quantity">
+                          <p>Qté :</p>
+                          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${article.quantity}">
+                        </div>
+                        <div class="cart__item__content__settings__delete">
+                          <p class="deleteItem">Supprimer</p>
+                        </div>
+                      </div>
+                    </div>
+                  </article>`;
+                totalPriceProducts += parseInt(article.price) * parseInt(article.quantity);// Incrémente le prix total par le prix de chaque articles en fonction de sa quantité
+                totalPrice.textContent = totalPriceProducts;// Insère le nouveau prix total dans le html
+                totalQuantityProducts += parseInt(article.quantity);// Incrémente la quantité totale par la quantité de chaque articles
+                totalQuantity.textContent = totalQuantityProducts;// Insère la nouvelle quantité totale dans le html 
+                }   
+            }            
         }
-    }   
+    }else{
+        articlePlace.innerHTML = "<p>Votre panier est vide !</p>";// Tableau panier (cart) vide
+    }
+    console.log(cart);
     modifyQuantity();// Appel de la fonction modifyQuantity() de modification de quantité de l'article
     deleteCart();// Appel de la fonction deleteCart() de suppression d'article du panier (cart)
+}
+//** Fonction getCart qui récupère le panier (cart) dans le localStorage **//
+function getCart() {
+    const cart = localStorage.getItem('cart');// Récupération du panier (cart) dans le localStorage
+    if (cart === null) {
+        return [];// Création d'un panier sous forme de tableau si panier (cart) inexistant 
+    } 
+    else {
+        return JSON.parse(cart);// Récupération du panier (cart) sous forme de tableau JSON
+    }
 }
 //** Fonction modifyQuantity de modification de quantité de l'article **//
 function modifyQuantity() {
@@ -60,13 +76,9 @@ function modifyQuantity() {
             let cart = JSON.parse(localStorage.getItem("cart"));// Récupération du tableau du panier
             for (article of cart) {
                 if (article._id === element.dataset.id && article.color === element.dataset.color) { // Conditions de correspondance des paramètres
-                    article.price = parseInt(article.price) / parseInt(article.quantity); // Obtention du prix à l'unité
-					console.log(article.price);
                     article.quantity = e.target.value; // Attribut la valeur de quantité rentrée à l'article
                     console.log(article.quantity);
                     if (article.quantity >= 1) {
-                        article.price = parseInt(article.price) * parseInt(article.quantity);// Multiplication du prix par la nouvelle quantité
-						console.log(cart);
                         localStorage.cart = JSON.stringify(cart);// Enregistrement du panier (cart) avec la nouvelle quantité
                         location.reload(true);// Rechargement de la page
                     } else {
@@ -83,7 +95,7 @@ function deleteCart() {
     const deleteArticle = document.querySelectorAll(".deleteItem"); // Constante de séléction de l'emplacement html du bouton supprimer
     deleteArticle.forEach ((element) => { // Applique la fonction qui suit sur chaque élément du tableau panier (cart)
     	element.addEventListener("click", () => { //** Écoute de l'évènement de changement de quantité **//
-            let articleToDelete = element.closest("article");// Sélection de l'article à supprimer (le plus proche du bouton supprimer
+            let articleToDelete = element.closest("article");// Sélection de l'article à supprimer (le plus proche du bouton supprimer)
             let cart = JSON.parse(localStorage.getItem("cart")); // Récupération du tableau du panier (cart)
             for (article of cart) {
                 if (article._id === articleToDelete.dataset.id && article.color === articleToDelete.dataset.color) { // Conditions de correspondance des paramètres
@@ -100,13 +112,6 @@ function deleteCart() {
             }
         });
     });   
-}
-//** Fonction increaseQuantityPrice d'augmentation des totaux **//
-function increaseQuantityPrice() {
-    totalPriceProducts += parseInt(article.price);// Incrémente le prix total par le prix de chaque articles en fonction de sa quantité
-    totalPrice.textContent = totalPriceProducts;// Insère le nouveau prix total dans le html
-    totalQuantityProducts += parseInt(article.quantity);// Incrémente la quantité totale par la quantité de chaque articles
-    totalQuantity.textContent = totalQuantityProducts;// Insère la nouvelle quantité totale dans le html 
 }
 //** Expressions régulières acceptées dans les champs du formulaire **//
 const regExpMail = new RegExp("^[a-zA-Z0-9_-]+@[a-zA-Z0-9-]{2,}[.][a-zA-Z]{2,3}$");
@@ -195,6 +200,7 @@ function submitForm(e) {
 	const addressRes = document.getElementById("addressErrorMsg");
 	const cityRes = document.getElementById("cityErrorMsg");
 	const mailRes = document.getElementById("emailErrorMsg");
+    const cart = getCart();
 	
 	if (cart.length === 0) {// Panier (cart) vide
 		alert("Votre panier est vide")
